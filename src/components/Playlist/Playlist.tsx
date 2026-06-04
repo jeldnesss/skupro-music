@@ -2,16 +2,33 @@ import { SongType } from '@/sharedTypes/sharedTypes';
 import { formatTime } from '@/utils/helper';
 import Link from 'next/link';
 import styles from './playlist.module.css';
+import { useAppDispatch, useAppSelector } from '@/store/store';
+import { setCurrentTrack } from '@/store/features/trackSlice';
+import classNames from 'classnames';
 type TrackProps = {
   track: SongType;
 };
 export default function Playlist({ track }: TrackProps) {
+  const dispatch = useAppDispatch();
+  const isPlay = useAppSelector((state) => state.tracks.isPlay);
+  const currentTrack = useAppSelector((state) => state.tracks.currentTrack);
+  const isActive = isPlay && currentTrack?._id === track._id;
+  const isActivePause = currentTrack?._id === track._id;
+  const onClickTrack = () => {
+    dispatch(setCurrentTrack(track));
+  };
+
   return (
-    <div className={styles.playlist__item}>
+    <div className={styles.playlist__item} onClick={onClickTrack}>
       <div className={styles.playlist__track}>
         <div className={styles.track__title}>
           <div className={styles.track__titleImage}>
-            <svg className={styles.track__titleSvg}>
+            <svg
+              className={classNames(styles.track__titleSvg, {
+                [styles.active]: isActive,
+                [styles.active_pause]: isActivePause,
+              })}
+            >
               <use xlinkHref="/img/icon/sprite.svg#icon-note"></use>
             </svg>
           </div>

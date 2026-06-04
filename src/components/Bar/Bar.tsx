@@ -1,9 +1,43 @@
+'use client';
 import Link from 'next/link';
 import styles from './bar.module.css';
 import classNames from 'classnames';
+import { useAppDispatch, useAppSelector } from '@/store/store';
+import { useRef } from 'react';
+import { setIsPlay } from '@/store/features/trackSlice';
 export default function Bar() {
+  const dispatch = useAppDispatch();
+  const currentTrack = useAppSelector((state) => state.tracks.currentTrack);
+  const audioRef = useRef<HTMLAudioElement | null>(null);
+  const isPlay = useAppSelector((state) => state.tracks.isPlay);
+  if (!currentTrack) return <></>;
+  const playTrack = () => {
+    if (audioRef) {
+      audioRef.current?.play();
+      dispatch(setIsPlay(true));
+    }
+  };
+
+  const pauseTrack = () => {
+    if (audioRef) {
+      audioRef.current?.pause();
+      dispatch(setIsPlay(false));
+    }
+  };
+
+  const toggleTrack = () => {
+    if (audioRef) {
+      if (!isPlay) {
+        playTrack();
+      } else {
+        pauseTrack();
+      }
+    }
+  };
+
   return (
     <div className={styles.bar}>
+      <audio ref={audioRef} controls src={currentTrack?.track_file}></audio>
       <div className={styles.bar__content}>
         <div className={styles.bar__playerProgress}></div>
         <div className={styles.bar__playerBlock}>
@@ -14,7 +48,10 @@ export default function Bar() {
                   <use xlinkHref="/img/icon/sprite.svg#icon-prev"></use>
                 </svg>
               </div>
-              <div className={classNames(styles.player__btnPlay, styles.btn)}>
+              <div
+                className={classNames(styles.player__btnPlay, styles.btn)}
+                onClick={toggleTrack}
+              >
                 <svg className={styles.player__btnPlaySvg}>
                   <use xlinkHref="/img/icon/sprite.svg#icon-play"></use>
                 </svg>
@@ -52,12 +89,12 @@ export default function Bar() {
                 </div>
                 <div className={styles.trackPlay__author}>
                   <Link className={styles.trackPlay__authorLink} href="">
-                    Ты та...
+                    {currentTrack.name}
                   </Link>
                 </div>
                 <div className={styles.trackPlay__album}>
                   <Link className={styles.trackPlay__albumLink} href="">
-                    Баста
+                    {currentTrack.author}
                   </Link>
                 </div>
               </div>
