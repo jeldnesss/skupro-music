@@ -3,13 +3,18 @@ import Link from 'next/link';
 import styles from './bar.module.css';
 import classNames from 'classnames';
 import { useAppDispatch, useAppSelector } from '@/store/store';
-import { useRef } from 'react';
+import { useEffect, useRef } from 'react';
 import { setIsPlay } from '@/store/features/trackSlice';
 export default function Bar() {
   const dispatch = useAppDispatch();
   const currentTrack = useAppSelector((state) => state.tracks.currentTrack);
   const audioRef = useRef<HTMLAudioElement | null>(null);
   const isPlay = useAppSelector((state) => state.tracks.isPlay);
+  useEffect(() => {
+    if (isPlay) {
+      audioRef.current?.play();
+    }
+  }, [currentTrack, isPlay]);
   if (!currentTrack) return <></>;
   const playTrack = () => {
     if (audioRef) {
@@ -37,7 +42,12 @@ export default function Bar() {
 
   return (
     <div className={styles.bar}>
-      <audio ref={audioRef} controls src={currentTrack?.track_file}></audio>
+      <audio
+        ref={audioRef}
+        controls
+        src={currentTrack?.track_file}
+        style={{ display: 'none' }}
+      ></audio>
       <div className={styles.bar__content}>
         <div className={styles.bar__playerProgress}></div>
         <div className={styles.bar__playerBlock}>
@@ -53,7 +63,13 @@ export default function Bar() {
                 onClick={toggleTrack}
               >
                 <svg className={styles.player__btnPlaySvg}>
-                  <use xlinkHref="/img/icon/sprite.svg#icon-play"></use>
+                  <use
+                    xlinkHref={
+                      isPlay
+                        ? '/img/icon/sprite.svg#icon-pause'
+                        : '/img/icon/sprite.svg#icon-play'
+                    }
+                  ></use>
                 </svg>
               </div>
               <div className={styles.player__btnNext}>

@@ -3,7 +3,7 @@ import { formatTime } from '@/utils/helper';
 import Link from 'next/link';
 import styles from './playlist.module.css';
 import { useAppDispatch, useAppSelector } from '@/store/store';
-import { setCurrentTrack } from '@/store/features/trackSlice';
+import { setCurrentTrack, setIsPlay } from '@/store/features/trackSlice';
 import classNames from 'classnames';
 type TrackProps = {
   track: SongType;
@@ -16,6 +16,7 @@ export default function Playlist({ track }: TrackProps) {
   const isActivePause = currentTrack?._id === track._id;
   const onClickTrack = () => {
     dispatch(setCurrentTrack(track));
+    dispatch(setIsPlay(true));
   };
 
   return (
