@@ -3,12 +3,17 @@ import { formatTime } from '@/utils/helper';
 import Link from 'next/link';
 import styles from './playlist.module.css';
 import { useAppDispatch, useAppSelector } from '@/store/store';
-import { setCurrentTrack, setIsPlay } from '@/store/features/trackSlice';
+import {
+  setCurrentPlaylist,
+  setCurrentTrack,
+  setIsPlay,
+} from '@/store/features/trackSlice';
 import classNames from 'classnames';
-type TrackProps = {
+type PlaylistProps = {
   track: SongType;
+  playlist: SongType[];
 };
-export default function Playlist({ track }: TrackProps) {
+export default function Playlist({ track, playlist }: PlaylistProps) {
   const dispatch = useAppDispatch();
   const isPlay = useAppSelector((state) => state.tracks.isPlay);
   const currentTrack = useAppSelector((state) => state.tracks.currentTrack);
@@ -16,6 +21,7 @@ export default function Playlist({ track }: TrackProps) {
   const isActivePause = currentTrack?._id === track._id;
   const onClickTrack = () => {
     dispatch(setCurrentTrack(track));
+    dispatch(setCurrentPlaylist(playlist));
     dispatch(setIsPlay(true));
   };
 

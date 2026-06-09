@@ -344,3 +344,12 @@
   position: relative;
   margin-top: -7px;
 }
+
+.time_show{
+  color: #ffffff;
+  margin-left: 10px;
+}
+
+.active__icon {
+  stroke: #ffffff;
+}

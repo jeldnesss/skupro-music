@@ -97,7 +97,7 @@ export default function Centerclock() {
         </div>
         <div className={styles.content__playlist}>
           {data.map((track) => (
-            <Playlist key={track._id} track={track} />
+            <Playlist key={track._id} track={track} playlist={data} />
           ))}
           <div className={styles.playlist__track}>
             <div className={styles.track__title}>

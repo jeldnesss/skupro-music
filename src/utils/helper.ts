@@ -1,4 +1,5 @@
 import { SongType } from '@/sharedTypes/sharedTypes';
+import { current } from '@reduxjs/toolkit';
 
 export function formatTime(time: number) {
   const minutes = Math.floor(time / 60);
@@ -6,6 +7,15 @@ export function formatTime(time: number) {
   const outputSeconds = inputSeconds < 1 ? `0${inputSeconds}` : inputSeconds;
   return `${minutes}:${outputSeconds}`;
 }
+
+export const getTimePanel = (
+  currentTime: number,
+  totalTime: number | undefined,
+) => {
+  if (totalTime) {
+    return `${formatTime(currentTime)} / ${formatTime(totalTime)}`;
+  }
+};
 export function getUniqueValuesByKey(
   arr: SongType[],
   key: keyof SongType,
