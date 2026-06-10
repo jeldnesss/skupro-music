@@ -1,6 +1,5 @@
 import { SongType } from '@/sharedTypes/sharedTypes';
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { stat } from 'fs';
 
 type InitialStateType = {
   currentTrack: null | SongType;
@@ -35,10 +34,9 @@ const trackSlice = createSlice({
         return;
       }
       const currIndex = state.playlist.findIndex(
-        (el) => el._id === state.currentTrack._id,
+        (el) => el._id === state.currentTrack!._id,
       );
       const nextIndex = currIndex + 1;
-      state.currentTrack = state.playlist[nextIndex];
       if (nextIndex < state.playlist.length) {
         state.currentTrack = state.playlist[nextIndex];
       } else {
@@ -53,7 +51,7 @@ const trackSlice = createSlice({
         return;
       }
       const currIndex = state.playlist.findIndex(
-        (el) => el._id === state.currentTrack._id,
+        (el) => el._id === state.currentTrack!._id,
       );
 
       const prevIndex = currIndex - 1;

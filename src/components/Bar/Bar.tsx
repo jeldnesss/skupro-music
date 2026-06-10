@@ -38,8 +38,8 @@ export default function Bar() {
   if (!currentTrack) return <></>;
 
   const playTrack = () => {
-    if (audioRef) {
-      audioRef.current?.play();
+    if (audioRef.current) {
+      audioRef.current.play();
       dispatch(setIsPlay(true));
     }
   };
@@ -48,14 +48,14 @@ export default function Bar() {
   };
 
   const pauseTrack = () => {
-    if (audioRef) {
-      audioRef.current?.pause();
+    if (audioRef.current) {
+      audioRef.current.pause();
       dispatch(setIsPlay(false));
     }
   };
 
   const toggleTrack = () => {
-    if (audioRef) {
+    if (audioRef.current) {
       if (!isPlay) {
         playTrack();
       } else {
@@ -73,6 +73,9 @@ export default function Bar() {
 
   const onLoadedMetadata = () => {
     setIsLoaded(true);
+    setValue(0);
+    setCurrTime(0);
+
     if (audioRef.current) {
       audioRef.current.play();
       dispatch(setIsPlay(true));
@@ -94,7 +97,9 @@ export default function Bar() {
   };
   const onShuffle = () => {
     dispatch(toggleShuffle());
-    console.log('shuffle:', state.isShuffle);
+  };
+  const onEndedTrack = () => {
+    dispatch(setNextTrack());
   };
 
   return (
@@ -106,6 +111,7 @@ export default function Bar() {
         loop={isLoop}
         onTimeUpdate={onTimeUpdate}
         onLoadedMetadata={onLoadedMetadata}
+        onEnded={onEndedTrack}
         style={{ display: 'none' }}
       ></audio>
       <div className={styles.bar__content}>
@@ -160,12 +166,13 @@ export default function Bar() {
                 className={classNames(
                   styles.player__btnShuffle,
                   styles.btnIcon,
-                  {
-                    [styles.active__icon]: isShuffle,
-                  },
                 )}
               >
-                <svg className={styles.player__btnShuffleSvg}>
+                <svg
+                  className={classNames(styles.player__btnShuffleSvg, {
+                    [styles.active__icon]: isShuffle,
+                  })}
+                >
                   <use xlinkHref="/img/icon/sprite.svg#icon-shuffle"></use>
                 </svg>
               </div>

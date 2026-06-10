@@ -4,10 +4,7 @@ import Link from 'next/link';
 import styles from './nav.module.css';
 import { useState } from 'react';
 import { getUniqueValuesByKey } from '@/utils/helper';
-import { SongType } from '@/sharedTypes/sharedTypes';
-type TrackProps = {
-  track: SongType;
-};
+
 export default function Nav() {
   const [isOpen, setIsOpen] = useState(false);
 
