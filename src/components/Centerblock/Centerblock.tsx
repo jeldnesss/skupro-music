@@ -3,23 +3,27 @@ import classNames from 'classnames';
 import Link from 'next/link';
 import styles from './centerblock.module.css';
 import Search from '../Search/Search';
-import { data } from '@/data';
 import { formatTime, getUniqueValuesByKey } from '@/utils/helper';
 import Playlist from '../Playlist/Playlist';
 import { useState } from 'react';
-
-export default function Centerclock() {
+import { SongType } from '@/sharedTypes/sharedTypes';
+type CenterclockProps = {
+  tracks: SongType[];
+};
+export default function Centerclock({ tracks }: CenterclockProps) {
   type FilterType = 'author' | 'year' | 'genre';
 
   const [activeFilter, setActiveFilter] = useState<FilterType | null>(null);
   const toggleFilter = (type: FilterType) => {
     setActiveFilter((prev: FilterType | null) => (prev === type ? null : type));
   };
-  const authors = getUniqueValuesByKey(data, 'author');
-  const genres = getUniqueValuesByKey(data, 'genre');
+  const authors = getUniqueValuesByKey(tracks, 'author');
+  const genres = getUniqueValuesByKey(tracks, 'genre');
 
   const years = [
-    ...new Set(data.map((track) => new Date(track.release_date).getFullYear())),
+    ...new Set(
+      tracks.map((track) => new Date(track.release_date).getFullYear()),
+    ),
   ].sort((a, b) => b - a);
   return (
     <div className={styles.centerblock}>
@@ -96,8 +100,8 @@ export default function Centerclock() {
           </div>
         </div>
         <div className={styles.content__playlist}>
-          {data.map((track) => (
-            <Playlist key={track._id} track={track} playlist={data} />
+          {tracks.map((track) => (
+            <Playlist key={track._id} track={track} playlist={tracks} />
           ))}
           <div className={styles.playlist__track}>
             <div className={styles.track__title}>
