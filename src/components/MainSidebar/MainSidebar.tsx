@@ -1,22 +1,42 @@
+'use client';
 import Image from 'next/image';
 import Link from 'next/link';
 import styles from './main-sidebar.module.css';
+import { useEffect, useState } from 'react';
+import { useRouter } from 'next/navigation';
 
 export default function MainSidebar() {
+  const [user, setUser] = useState(null);
+
+  useEffect(() => {
+    const storedUser = localStorage.getItem('user');
+
+    if (storedUser) {
+      setUser(JSON.parse(storedUser));
+    }
+  }, []);
+  const router = useRouter();
+
+  const handleLogout = () => {
+    localStorage.removeItem('user');
+    router.push('/auth/signin');
+  };
   return (
     <div className={styles.main__sidebar}>
-      <div className={styles.sidebar__personal}>
-        <p className={styles.sidebar__personalName}>Sergey.Ivanov</p>
-        <div className={styles.sidebar__icon}>
-          <svg>
-            <use xlinkHref="/img/icon/sprite.svg#logout"></use>
-          </svg>
+      {user && (
+        <div className={styles.sidebar__personal}>
+          <p className={styles.sidebar__personalName}>Sergey.Ivanov</p>
+          <div onClick={handleLogout} className={styles.sidebar__icon}>
+            <svg>
+              <use xlinkHref="/img/icon/sprite.svg#logout"></use>
+            </svg>
+          </div>
         </div>
-      </div>
+      )}
       <div className={styles.sidebar__block}>
         <div className={styles.sidebar__list}>
           <div className={styles.sidebar__item}>
-            <Link className={styles.sidebar__link} href="/music/category/1">
+            <Link className={styles.sidebar__link} href="/music/category/2">
               <Image
                 className={styles.sidebar__img}
                 src="/img/playlist01.png"
@@ -27,7 +47,7 @@ export default function MainSidebar() {
             </Link>
           </div>
           <div className={styles.sidebar__item}>
-            <Link className={styles.sidebar__link} href="/music/category/2">
+            <Link className={styles.sidebar__link} href="/music/category/3">
               <Image
                 className={styles.sidebar__img}
                 src="/img/playlist02.png"
@@ -38,7 +58,7 @@ export default function MainSidebar() {
             </Link>
           </div>
           <div className={styles.sidebar__item}>
-            <Link className={styles.sidebar__link} href="/music/category/3">
+            <Link className={styles.sidebar__link} href="/music/category/4">
               <Image
                 className={styles.sidebar__img}
                 src="/img/playlist03.png"

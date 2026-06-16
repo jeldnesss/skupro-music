@@ -35,6 +35,7 @@ export default function Signin() {
     authUser({ email, password })
       .then((res) => {
         console.log(res);
+        localStorage.setItem('user', JSON.stringify(res));
         router.push('/music/main');
       })
       .catch((error) => {

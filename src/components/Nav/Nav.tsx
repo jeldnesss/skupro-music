@@ -7,7 +7,7 @@ import { getUniqueValuesByKey } from '@/utils/helper';
 
 export default function Nav() {
   const [isOpen, setIsOpen] = useState(false);
-
+  
   return (
     <nav className={styles.main__nav}>
       <div className={styles.nav__logo}>
@@ -38,7 +38,7 @@ export default function Nav() {
               </Link>
             </li>
             <li className={styles.menu__item}>
-              <Link href="../signin.html" className={styles.menu__link}>
+              <Link href="/auth/signin" className={styles.menu__link}>
                 Войти
               </Link>
             </li>
