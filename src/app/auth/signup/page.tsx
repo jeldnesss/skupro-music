@@ -45,7 +45,8 @@ export default function SignUp() {
       username,
     })
       .then((res) => {
-        console.log(res.data);
+        console.log(res.data.result);
+        localStorage.setItem('user', JSON.stringify(res.data.result));
         alert('Пользователь успешно зарегистрирован');
       })
       .catch((error) => {

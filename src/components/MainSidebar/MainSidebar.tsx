@@ -4,9 +4,13 @@ import Link from 'next/link';
 import styles from './main-sidebar.module.css';
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
-
+type UserType = {
+  username: string;
+  email: string;
+  _id: number;
+};
 export default function MainSidebar() {
-  const [user, setUser] = useState(null);
+  const [user, setUser] = useState<UserType | null>(null);
 
   useEffect(() => {
     const storedUser = localStorage.getItem('user');
@@ -15,24 +19,27 @@ export default function MainSidebar() {
       setUser(JSON.parse(storedUser));
     }
   }, []);
+  
   const router = useRouter();
 
   const handleLogout = () => {
     localStorage.removeItem('user');
+    setUser(null);
     router.push('/auth/signin');
   };
   return (
     <div className={styles.main__sidebar}>
-      {user && (
-        <div className={styles.sidebar__personal}>
-          <p className={styles.sidebar__personalName}>Sergey.Ivanov</p>
-          <div onClick={handleLogout} className={styles.sidebar__icon}>
-            <svg>
-              <use xlinkHref="/img/icon/sprite.svg#logout"></use>
-            </svg>
-          </div>
+      <div className={styles.sidebar__personal}>
+        <p className={styles.sidebar__personalName}>
+          {user ? user.username : 'Гость'}
+        </p>
+        <div onClick={handleLogout} className={styles.sidebar__icon}>
+          <svg>
+            <use xlinkHref="/img/icon/sprite.svg#logout"></use>
+          </svg>
         </div>
-      )}
+      </div>
+
       <div className={styles.sidebar__block}>
         <div className={styles.sidebar__list}>
           <div className={styles.sidebar__item}>

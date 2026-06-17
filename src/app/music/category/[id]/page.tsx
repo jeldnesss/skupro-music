@@ -28,7 +28,6 @@ export default function CategoryPage() {
         setError(null);
 
         const res = await getCategoryById(id as string);
-        console.log('CATEGORY DATA:', res);
 
         const ids = res?.data?.items;
 
@@ -39,26 +38,16 @@ export default function CategoryPage() {
         }
 
         const fullTracks = await Promise.all(
-          ids.map(async (trackId: number) => {
-            try {
-              const res = await fetch(
-                `https://webdev-music-003b5b991590.herokuapp.com/catalog/track/${trackId}/`,
-              );
-
-              if (!res.ok) return null;
-
-              const data = await res.json();
-              return data?.data ?? null;
-            } catch (err) {
-              console.error(`Ошибка трека ${trackId}`, err);
-              return null;
-            }
+          ids.map((trackId: number) => {
+            return fetch(
+              `https://webdev-music-003b5b991590.herokuapp.com/catalog/track/${trackId}/`,
+            )
+              .then((res) => res.json())
+              .then((data) => data.data);
           }),
         );
 
-        const filtered = fullTracks.filter(Boolean) as SongType[];
-
-        setTracks(filtered);
+        setTracks(fullTracks);
       } catch (err) {
         console.error('CATEGORY ERROR:', err);
         setError('Ошибка загрузки подборки');
