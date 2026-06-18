@@ -10,7 +10,7 @@ import Centerclock from '@/components/Centerblock/Centerblock';
 
 import { SongType } from '@/sharedTypes/sharedTypes';
 import styles from './page.module.css';
-import { getCategoryById } from '@/services/tracks/tracksApi';
+import { getCategoryById, getTracks } from '@/services/tracks/tracksApi';
 
 export default function CategoryPage() {
   const { id } = useParams();
@@ -37,17 +37,13 @@ export default function CategoryPage() {
           return;
         }
 
-        const fullTracks = await Promise.all(
-          ids.map((trackId: number) => {
-            return fetch(
-              `https://webdev-music-003b5b991590.herokuapp.com/catalog/track/${trackId}/`,
-            )
-              .then((res) => res.json())
-              .then((data) => data.data);
-          }),
+        const allTracks = await getTracks();
+
+        const categoryTracks = allTracks.filter((track) =>
+          ids.includes(track._id),
         );
 
-        setTracks(fullTracks);
+        setTracks(categoryTracks);
       } catch (err) {
         console.error('CATEGORY ERROR:', err);
         setError('Ошибка загрузки подборки');
