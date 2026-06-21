@@ -6,6 +6,8 @@ import Link from 'next/link';
 import { ChangeEvent, useState } from 'react';
 import { AxiosError } from 'axios';
 import { useRouter } from 'next/navigation';
+import { saveTokens } from '@/utils/token';
+import { BASE_URL } from '@/services/constants';
 
 export default function Signin() {
   const [email, setEmail] = useState('');
@@ -15,56 +17,46 @@ export default function Signin() {
   const [isLoading, setIsLoading] = useState(false);
   const router = useRouter();
 
-  const onChangeEmail = (
-    e: ChangeEvent<HTMLInputElement, HTMLInputElement>,
-  ) => {
+  const onChangeEmail = (e: ChangeEvent<HTMLInputElement>) => {
     setEmail(e.target.value);
   };
-  const onChangePassword = (
-    e: ChangeEvent<HTMLInputElement, HTMLInputElement>,
-  ) => {
+
+  const onChangePassword = (e: ChangeEvent<HTMLInputElement>) => {
     setPassword(e.target.value);
   };
-  const onSubmit = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
+  const onSubmit = async (e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
-    setIsLoading(true);
-    setErrorMes('');
-    if (!email.trim() || !password.trim()) {
-      return setErrorMes('заполните все поля');
-    }
-    authUser({ email, password })
-      .then((res) => {
-        console.log(res);
-        localStorage.setItem('user', JSON.stringify(res));
-        router.push('/music/main');
-      })
-      .catch((error) => {
-        if (error instanceof AxiosError) {
-          if (error.response) {
-            // Запрос был сделан, и сервер ответил кодом состояния,
-            // который выходит за пределы 2xx
-            console.log(error.response.data);
-            console.log(error.response.status);
-            console.log(error.response.headers);
-            setErrorMes(error.response.data.message);
-          } else if (error.request) {
-            // Запрос был сделан, но ответа не получен
-            // `error.request` — это XMLHTTPRequest в браузере и
-            // экземпляр http.ClientRequest в node.js
-            console.log(error.request);
-            setErrorMes('ошибка интернета');
-          } else {
-            // Произошло что-то при настройке запроса, вызвавшее ошибку
-            console.log('Error', error.message);
-            setErrorMes('неизвестная ошибка');
-          }
 
-          console.log(error.config);
-        }
-      })
-      .finally(() => {
-        setIsLoading(false);
+    try {
+      setIsLoading(true);
+      setErrorMes('');
+
+      const res = await authUser({ email, password });
+
+      console.log(res);
+
+      saveTokens(res.access, res.refresh);
+
+      const userRes = await fetch(`${BASE_URL}/user/login/`, {
+        method: 'POST',
+        body: JSON.stringify({ email, password }),
+        headers: {
+          'content-type': 'application/json',
+        },
       });
+
+      const userData = await userRes.json();
+
+      localStorage.setItem('user', JSON.stringify(userData));
+      localStorage.setItem('access', res.access);
+      localStorage.setItem('refresh', res.refresh);
+
+      router.push('/music/main');
+    } catch (error) {
+      console.log(error);
+    } finally {
+      setIsLoading(false);
+    }
   };
   return (
     <>

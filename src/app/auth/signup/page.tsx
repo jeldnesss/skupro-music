@@ -1,5 +1,5 @@
 'use client';
-
+import { useRouter } from 'next/navigation';
 import styles from './signup.module.css';
 import classNames from 'classnames';
 import Link from 'next/link';
@@ -15,7 +15,7 @@ export default function SignUp() {
 
   const [errorMes, setErrorMes] = useState('');
   const [isLoading, setIsLoading] = useState(false);
-
+  const router = useRouter();
   const onSubmit = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
     e.preventDefault();
 
@@ -45,14 +45,17 @@ export default function SignUp() {
       username,
     })
       .then((res) => {
-        console.log(res.data.result);
-        localStorage.setItem('user', JSON.stringify(res.data.result));
         alert('Пользователь успешно зарегистрирован');
+        router.push('/auth/signin');
       })
       .catch((error) => {
         if (error instanceof AxiosError) {
           if (error.response) {
-            setErrorMes(error.response.data.message);
+            setErrorMes(
+              error.response.data.detail ??
+                error.response.data.message ??
+                'Ошибка регистрации',
+            );
           } else if (error.request) {
             setErrorMes('Ошибка интернета');
           } else {

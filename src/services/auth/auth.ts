@@ -1,30 +1,33 @@
-import { BASE_URL } from '../constants';
 import axios from 'axios';
+import { BASE_URL } from '../constants';
 
-type authUserProp = {
+type AuthUserProps = {
   email: string;
   password: string;
 };
-type authUserReturn = {
-  email: string;
-  password: string;
-  _id: number;
+
+export type AuthResponse = {
+  access: string;
+  refresh: string;
 };
-export const authUser = (data: authUserProp): Promise<authUserReturn> => {
-  return axios.post(BASE_URL + '/user/login/', data, {
+
+export const authUser = async (data: AuthUserProps): Promise<AuthResponse> => {
+  const res = await axios.post<AuthResponse>(`${BASE_URL}/user/token/`, data, {
     headers: {
-      'content-type': 'application/json',
+      'Content-Type': 'application/json',
     },
   });
+
+  return res.data;
 };
 
-type signUpProps = {
+type SignUpProps = {
   email: string;
   password: string;
   username: string;
 };
 
-type signUpResponse = {
+type SignUpResponse = {
   message: string;
   success: boolean;
   result: {
@@ -34,10 +37,18 @@ type signUpResponse = {
   };
 };
 
-export const signUpUser = (data: signUpProps): Promise<signUpResponse> => {
-  return axios.post(BASE_URL + '/user/signup/', data, {
-    headers: {
-      'content-type': 'application/json',
+export const signUpUser = async (
+  data: SignUpProps,
+): Promise<SignUpResponse> => {
+  const res = await axios.post<SignUpResponse>(
+    `${BASE_URL}/user/signup/`,
+    data,
+    {
+      headers: {
+        'Content-Type': 'application/json',
+      },
     },
-  });
+  );
+
+  return res.data;
 };

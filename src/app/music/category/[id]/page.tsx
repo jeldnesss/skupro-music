@@ -3,13 +3,9 @@
 import { useEffect, useState } from 'react';
 import { useParams } from 'next/navigation';
 
-import Nav from '@/components/Nav/Nav';
-import Bar from '@/components/Bar/Bar';
-import MainSidebar from '@/components/MainSidebar/MainSidebar';
 import Centerclock from '@/components/Centerblock/Centerblock';
 
 import { SongType } from '@/sharedTypes/sharedTypes';
-import styles from './page.module.css';
 import { getCategoryById, getTracks } from '@/services/tracks/tracksApi';
 
 export default function CategoryPage() {
@@ -55,24 +51,21 @@ export default function CategoryPage() {
     fetchCategory();
   }, [id]);
 
+  if (loading) {
+    return <div>Загрузка...</div>;
+  }
+
+  if (error) {
+    return <div style={{ color: 'red' }}>{error}</div>;
+  }
+
   return (
-    <div className={styles.wrapper}>
-      <div className={styles.container}>
-        <main className={styles.main}>
-          <Nav />
-
-          {loading && <div>Загрузка...</div>}
-
-          {error && !loading && <div style={{ color: 'red' }}>{error}</div>}
-
-          {!loading && !error && <Centerclock tracks={tracks} />}
-
-          <MainSidebar />
-        </main>
-
-        <Bar />
-        <footer className="footer" />
-      </div>
-    </div>
+    <Centerclock
+      errorRes={error}
+      tracks={tracks}
+      isLoading={loading}
+      title="Треки"
+    />
   );
 }
+

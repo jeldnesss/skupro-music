@@ -9,8 +9,16 @@ import { useState } from 'react';
 import { SongType } from '@/sharedTypes/sharedTypes';
 type CenterclockProps = {
   tracks: SongType[];
+  isLoading: boolean;
+  errorRes: string | null;
+  title: string;
 };
-export default function Centerclock({ tracks }: CenterclockProps) {
+export default function Centerclock({
+  tracks,
+  errorRes,
+  isLoading,
+  title,
+}: CenterclockProps) {
   type FilterType = 'author' | 'year' | 'genre';
 
   const [activeFilter, setActiveFilter] = useState<FilterType | null>(null);
@@ -28,7 +36,7 @@ export default function Centerclock({ tracks }: CenterclockProps) {
   return (
     <div className={styles.centerblock}>
       <Search />
-      <h2 className={styles.centerblock__h2}>Треки</h2>
+      <h2 className={styles.centerblock__h2}>{title}</h2>
       <div className={styles.centerblock__filter}>
         <div className={styles.filter__title}>Искать по:</div>
 
@@ -100,40 +108,13 @@ export default function Centerclock({ tracks }: CenterclockProps) {
           </div>
         </div>
         <div className={styles.content__playlist}>
-          {tracks.map((track) => (
-            <Playlist key={track._id} track={track} playlist={tracks} />
-          ))}
-          <div className={styles.playlist__track}>
-            <div className={styles.track__title}>
-              <div className={styles.track__titleImage}>
-                <svg className={styles.track__titleSvg}>
-                  <use xlinkHref="/img/icon/sprite.svg#icon-note"></use>
-                </svg>
-              </div>
-              <div>
-                <Link className={styles.track__titleLink} href="">
-                  Run Run
-                  <span className={styles.track__titleSpan}>(feat. AR/CO)</span>
-                </Link>
-              </div>
-            </div>
-            <div className={styles.track__author}>
-              <Link className={styles.track__authorLink} href="">
-                Jaded, Will Clarke, AR/CO
-              </Link>
-            </div>
-            <div className={styles.track__album}>
-              <Link className={styles.track__albumLink} href="">
-                Run Run
-              </Link>
-            </div>
-            <div className="track__time">
-              <svg className={styles.track__timeSvg}>
-                <use xlinkHref="/img/icon/sprite.svg#icon-like"></use>
-              </svg>
-              <span className={styles.track__timeText}>2:54</span>
-            </div>
-          </div>
+          {errorRes
+            ? errorRes
+            : isLoading
+              ? 'Загрузка...'
+              : tracks.map((track) => (
+                  <Playlist key={track._id} track={track} playlist={tracks} />
+                ))}
         </div>
       </div>
     </div>

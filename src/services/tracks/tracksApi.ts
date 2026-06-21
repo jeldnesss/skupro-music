@@ -11,3 +11,4 @@ export const getCategoryById = async (id: string) => {
   const res = await axios.get(`${BASE_URL}/catalog/selection/${id}/`);
   return res.data;
 };
+

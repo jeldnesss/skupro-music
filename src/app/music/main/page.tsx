@@ -1,34 +1,20 @@
 'use client';
-import Image from 'next/image';
-import '../../page.css';
-import classnames from 'classnames';
-import styles from './page.module.css';
-import Link from 'next/link';
-import Bar from '@/components/Bar/Bar';
-import MainSidebar from '@/components/MainSidebar/MainSidebar';
+
 import Centerclock from '@/components/Centerblock/Centerblock';
-import Nav from '@/components/Nav/Nav';
-import { useEffect, useState } from 'react';
-import { getTracks } from '@/services/tracks/tracksApi';
-import { SongType } from '@/sharedTypes/sharedTypes';
+
+import { useAppSelector } from '@/store/store';
 
 export default function Home() {
-  const [tracks, setTracks] = useState<SongType[]>([]);
+  const { fetchError, fetchIsLoading, allTracks } = useAppSelector(
+    (state) => state.tracks,
+  );
 
-  useEffect(() => {
-    getTracks().then(setTracks);
-  }, []);
   return (
-    <div className={styles.wrapper}>
-      <div className={styles.container}>
-        <main className={styles.main}>
-          <Nav />
-          <Centerclock tracks={tracks} />
-          <MainSidebar />
-        </main>
-        <Bar />
-        <footer className="footer"></footer>
-      </div>
-    </div>
+    <Centerclock
+      tracks={allTracks}
+      isLoading={fetchIsLoading}
+      errorRes={fetchError}
+      title={'треки'}
+    />
   );
 }

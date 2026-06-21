@@ -3,14 +3,18 @@ import Image from 'next/image';
 import Link from 'next/link';
 import styles from './main-sidebar.module.css';
 import { useEffect, useState } from 'react';
-import { useRouter } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
+import { useAppDispatch } from '@/store/store';
+import { resetTracks } from '@/store/features/trackSlice';
 type UserType = {
   username: string;
   email: string;
   _id: number;
 };
 export default function MainSidebar() {
+  const dispatch = useAppDispatch();
   const [user, setUser] = useState<UserType | null>(null);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const storedUser = localStorage.getItem('user');
@@ -18,14 +22,25 @@ export default function MainSidebar() {
     if (storedUser) {
       setUser(JSON.parse(storedUser));
     }
+
+    setLoading(false);
   }, []);
-  
+
+  const pathname = usePathname();
   const router = useRouter();
 
   const handleLogout = () => {
     localStorage.removeItem('user');
+    localStorage.removeItem('access');
+    localStorage.removeItem('refresh');
+    dispatch(resetTracks());
     setUser(null);
-    router.push('/auth/signin');
+
+    if (pathname === '/music/favorite') {
+      router.push('/music/main');
+    } else {
+      router.push('/auth/signin');
+    }
   };
   return (
     <div className={styles.main__sidebar}>

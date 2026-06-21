@@ -7,8 +7,15 @@ import {
   setCurrentPlaylist,
   setCurrentTrack,
   setIsPlay,
+  toggleLike,
 } from '@/store/features/trackSlice';
 import classNames from 'classnames';
+import {
+  addFavorite,
+  removeFavorite,
+} from '@/services/tracks/favouritesTracks';
+import { withReAuth } from '@/services/auth/withReAuth';
+import { useCallback } from 'react';
 type PlaylistProps = {
   track: SongType;
   playlist: SongType[];
@@ -19,12 +26,31 @@ export default function Playlist({ track, playlist }: PlaylistProps) {
   const currentTrack = useAppSelector((state) => state.tracks.currentTrack);
   const isActive = isPlay && currentTrack?._id === track._id;
   const isActivePause = currentTrack?._id === track._id;
-  const onClickTrack = () => {
+  const likedTracks = useAppSelector((state) => state.tracks.likedTracks);
+  const isLiked = likedTracks.includes(track._id);
+  const onClickTrack = useCallback(() => {
     dispatch(setCurrentTrack(track));
     dispatch(setCurrentPlaylist(playlist));
     dispatch(setIsPlay(true));
-  };
+  }, [dispatch, track, playlist]);
+  const handleLike = useCallback(
+    async (e: React.MouseEvent) => {
+      e.stopPropagation();
 
+      try {
+        if (isLiked) {
+          await withReAuth(() => removeFavorite(track._id));
+        } else {
+          await withReAuth(() => addFavorite(track._id));
+        }
+
+        dispatch(toggleLike(track._id));
+      } catch (err) {
+        console.error('LIKE ERROR', err);
+      }
+    },
+    [isLiked, track._id, dispatch],
+  );
   return (
     <div className={styles.playlist__item} onClick={onClickTrack}>
       <div className={styles.playlist__track}>
@@ -56,7 +82,12 @@ export default function Playlist({ track, playlist }: PlaylistProps) {
           </Link>
         </div>
         <div className="track__time">
-          <svg className={styles.track__timeSvg}>
+          <svg
+            className={classNames(styles.track__timeSvg, {
+              [styles.liked]: isLiked,
+            })}
+            onClick={handleLike}
+          >
             <use xlinkHref="/img/icon/sprite.svg#icon-like"></use>
           </svg>
           <span className={styles.track__timeText}>
