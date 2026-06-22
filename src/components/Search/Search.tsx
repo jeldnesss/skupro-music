@@ -2,12 +2,11 @@
 import { useState } from 'react';
 import styles from './search.module.css';
 
-export default function Search() {
-  const [searchInput, setSearchInput] = useState('');
-
-  const onSearchInput = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setSearchInput(e.target.value);
-  };
+type SearchProps = {
+  value: string;
+  onChange: (value: string) => void;
+};
+export default function Search({ value, onChange }: SearchProps) {
   return (
     <div className={styles.centerblock__search}>
       <svg className={styles.search__svg}>
@@ -18,8 +17,8 @@ export default function Search() {
         type="search"
         placeholder="Поиск"
         name="search"
-        value={searchInput}
-        onChange={onSearchInput}
+        value={value}
+        onChange={(e) => onChange(e.target.value)}
       />
     </div>
   );
