@@ -6,6 +6,7 @@ import Link from 'next/link';
 import { ChangeEvent, useState } from 'react';
 import { AxiosError } from 'axios';
 import { signUpUser } from '@/services/auth/auth';
+import { toast } from 'react-toastify';
 
 export default function SignUp() {
   const [email, setEmail] = useState('');
@@ -45,7 +46,7 @@ export default function SignUp() {
       username,
     })
       .then((res) => {
-        alert('Пользователь успешно зарегистрирован');
+        toast.error('Пользователь успешно зарегистрирован');
         router.push('/auth/signin');
       })
       .catch((error) => {

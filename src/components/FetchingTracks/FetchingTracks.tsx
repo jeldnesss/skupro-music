@@ -12,6 +12,7 @@ import {
 } from '@/store/features/trackSlice';
 import { getFavorites } from '@/services/tracks/favouritesTracks';
 import { withReAuth } from '@/services/auth/withReAuth';
+import { SongType } from '@/sharedTypes/sharedTypes';
 
 export default function FetchingTracks() {
   const dispatch = useAppDispatch();
@@ -29,11 +30,11 @@ export default function FetchingTracks() {
         dispatch(setAllTracks(tracksRes));
 
         if (token) {
-          const likedRes = await withReAuth(getFavorites);
+          const likedRes: { data: SongType[] } = await withReAuth(getFavorites);
 
           console.log('LIKED RES:', likedRes);
 
-          const likedIds = likedRes.data.map((track: any) => track._id);
+          const likedIds = likedRes.data.map(({ _id }) => _id);
 
           dispatch(setLikedTracks(likedIds));
         } else {

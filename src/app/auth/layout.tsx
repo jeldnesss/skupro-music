@@ -1,6 +1,6 @@
 import { ReactNode } from 'react';
 import styles from './layout.module.css';
-
+import { ToastContainer } from 'react-toastify';
 interface AutoLayotProps {
   children: ReactNode;
 }
@@ -14,6 +14,15 @@ export default function AuthLayot({ children }: AutoLayotProps) {
             <form className={styles.modal__form}>{children}</form>
           </div>
         </div>
+        <ToastContainer
+          position="top-right"
+          autoClose={3000}
+          hideProgressBar={false}
+          newestOnTop
+          closeOnClick
+          pauseOnHover
+          draggable
+        />
       </div>
     </>
   );
