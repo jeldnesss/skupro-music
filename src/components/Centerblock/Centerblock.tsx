@@ -47,7 +47,7 @@ export default function Centerclock({
     let result = tracks.filter((track) => {
       const matchAuthor = !selectedAuthor || track.author === selectedAuthor;
 
-      const matchGenre = !selectedGenre || track.genre === selectedGenre;
+      const matchGenre = !selectedGenre || track.genre.includes(selectedGenre);
 
       const matchYear =
         !selectedYear ||

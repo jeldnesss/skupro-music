@@ -28,6 +28,7 @@
   -ms-flex-align: center;
   align-items: center;
   margin-bottom: 51px;
+  position: relative;
 }
 
 .centerblock__content {
@@ -263,6 +264,10 @@
   background-color: #313131;
   padding: 34px;
   border-radius: 12px;
+  position: absolute;
+  
+
+  z-index: 100;
 
   &::-webkit-scrollbar {
     width: 4px;
@@ -276,7 +281,7 @@
     background-color: white;
   }
 }
-.active{
+.active {
   background-color: #cac2c2;
   color: rgb(60, 60, 60);
 }

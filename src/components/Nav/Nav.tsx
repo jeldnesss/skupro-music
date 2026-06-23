@@ -2,12 +2,27 @@
 import Image from 'next/image';
 import Link from 'next/link';
 import styles from './nav.module.css';
-import { useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import { getUniqueValuesByKey } from '@/utils/helper';
-
+type UserType = {
+  username: string;
+  email: string;
+  _id: number;
+};
 export default function Nav() {
   const [isOpen, setIsOpen] = useState(false);
+  const [user, setUser] = useState<UserType | null>(null);
+  const [loading, setLoading] = useState(true);
 
+  useEffect(() => {
+    const storedUser = localStorage.getItem('user');
+
+    if (storedUser) {
+      setUser(JSON.parse(storedUser));
+    }
+
+    setLoading(false);
+  }, []);
   return (
     <nav className={styles.main__nav}>
       <div className={styles.nav__logo}>
@@ -37,11 +52,13 @@ export default function Nav() {
                 Мой плейлист
               </Link>
             </li>
-            <li className={styles.menu__item}>
-              <Link href="/auth/signin" className={styles.menu__link}>
-                Войти
-              </Link>
-            </li>
+            {!user && !loading && (
+              <li className={styles.menu__item}>
+                <Link href="/auth/signin" className={styles.menu__link}>
+                  Войти
+                </Link>
+              </li>
+            )}
           </ul>
         </div>
       )}

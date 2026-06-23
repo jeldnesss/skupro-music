@@ -11,7 +11,7 @@ module.exports = {
     '^@/(.*)$': '<rootDir>/src/$1',
     '\\.(css|scss|sass)$': 'identity-obj-proxy',
   },
-  transform: {
+  transform: { 
     '^.+\\.(ts|tsx)$': 'ts-jest',
   },
 };
