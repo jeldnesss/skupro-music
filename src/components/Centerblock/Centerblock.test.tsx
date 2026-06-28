@@ -1,32 +1,58 @@
 import { render, screen, fireEvent } from '@testing-library/react';
 import Centerblock from './Centerblock';
-
-const mockTracks = [
+import { SongType } from '@/sharedTypes/sharedTypes';
+import userEvent from '@testing-library/user-event';
+const mockTracks: SongType[] = [
   {
     _id: 1,
     name: 'Song A',
     author: 'Author 1',
-    genre: 'Rock',
+    genre: ['Rock'],
+    album: 'Album A',
+    duration_in_seconds: 180,
     release_date: '2023-01-01',
+    logo: '',
+    track_file: '',
+    stared_user: [],
   },
   {
     _id: 2,
     name: 'Song B',
     author: 'Author 2',
-    genre: 'Pop',
+    genre: ['Pop'],
+    album: 'Album B',
+    duration_in_seconds: 200,
     release_date: '2022-01-01',
+    logo: '',
+    track_file: '',
+    stared_user: [],
   },
 ];
-
+type SearchMockProps = {
+  value: string;
+  onChange: (value: string) => void;
+};
 jest.mock('../Search/Search', () => ({
   __esModule: true,
-  default: ({ value, onChange }: any) => (
+  default: ({ value, onChange }: SearchMockProps) => (
     <input
       placeholder="Поиск"
       value={value}
-      onChange={(e) => onChange(e.target.value)}
+      onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+        onChange(e.target.value)
+      }
     />
   ),
+}));
+jest.mock('../Playlist/Playlist', () => ({
+  __esModule: true,
+  default: ({
+    track,
+  }: {
+    track: {
+      name: string;
+    };
+  }) => <div>{track.name}</div>,
 }));
 
 describe('Centerblock', () => {
@@ -37,7 +63,7 @@ describe('Centerblock', () => {
         isLoading={false}
         errorRes={null}
         title="Треки"
-      />
+      />,
     );
 
     expect(screen.getByText('Song A')).toBeInTheDocument();
@@ -51,7 +77,7 @@ describe('Centerblock', () => {
         isLoading={false}
         errorRes={null}
         title="Треки"
-      />
+      />,
     );
 
     const input = screen.getByPlaceholderText('Поиск');
@@ -62,37 +88,47 @@ describe('Centerblock', () => {
     expect(screen.queryByText('Song B')).not.toBeInTheDocument();
   });
 
-  it('открывает фильтр по автору и выбирает значение', () => {
+  it('открывает фильтр по автору и выбирает значение', async () => {
     render(
       <Centerblock
         tracks={mockTracks}
         isLoading={false}
         errorRes={null}
         title="Треки"
-      />
+      />,
     );
 
-    screen.getByText('исполнителю').click();
-    screen.getByText('Author 1').click();
+    const user = userEvent.setup();
+
+    await user.click(screen.getByText('исполнителю'));
+
+    const author = await screen.findByText('Author 1');
+
+    await user.click(author);
 
     expect(screen.getByText('Song A')).toBeInTheDocument();
     expect(screen.queryByText('Song B')).not.toBeInTheDocument();
   });
 
-  it('сбрасывает фильтры', () => {
+  it('сбрасывает фильтры', async () => {
     render(
       <Centerblock
         tracks={mockTracks}
         isLoading={false}
         errorRes={null}
         title="Треки"
-      />
+      />,
     );
 
-    screen.getByText('исполнителю').click();
-    screen.getByText('Author 1').click();
+    const user = userEvent.setup();
 
-    screen.getByText('Сбросить фильтры').click();
+    await user.click(screen.getByText('исполнителю'));
+
+    const author = await screen.findByText('Author 1');
+
+    await user.click(author);
+
+    await user.click(screen.getByText('Сбросить фильтры'));
 
     expect(screen.getByText('Song A')).toBeInTheDocument();
     expect(screen.getByText('Song B')).toBeInTheDocument();

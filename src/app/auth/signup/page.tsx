@@ -46,7 +46,7 @@ export default function SignUp() {
       username,
     })
       .then((res) => {
-        toast.error('Пользователь успешно зарегистрирован');
+        toast.success('Пользователь успешно зарегистрирован');
         router.push('/auth/signin');
       })
       .catch((error) => {

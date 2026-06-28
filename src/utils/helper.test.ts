@@ -1,3 +1,4 @@
+import { SongType } from '@/sharedTypes/sharedTypes';
 import { formatTime, getUniqueValuesByKey } from './helper';
 
 describe('formatTime', () => {
@@ -9,11 +10,44 @@ describe('formatTime', () => {
   });
 });
 describe('getUniqueValuesByKey', () => {
-  const mockData = [
-    { author: 'A', genre: 'Rock' },
-    { author: 'A', genre: 'Pop' },
-    { author: 'B', genre: 'Rock' },
-  ] as any;
+  const mockData: SongType[] = [
+    {
+      _id: 1,
+      name: 'Song A',
+      author: 'A',
+      genre: ['Rock'],
+      album: 'Album A',
+      duration_in_seconds: 120,
+      release_date: '2023-01-01',
+      logo: '',
+      track_file: '',
+      stared_user: [],
+    },
+    {
+      _id: 2,
+      name: 'Song B',
+      author: 'A',
+      genre: ['Pop'],
+      album: 'Album B',
+      duration_in_seconds: 200,
+      release_date: '2023-01-01',
+      logo: '',
+      track_file: '',
+      stared_user: [],
+    },
+    {
+      _id: 3,
+      name: 'Song C',
+      author: 'B',
+      genre: ['Rock'],
+      album: 'Album C',
+      duration_in_seconds: 150,
+      release_date: '2023-01-01',
+      logo: '',
+      track_file: '',
+      stared_user: [],
+    },
+  ];
 
   test('returns unique authors', () => {
     expect(getUniqueValuesByKey(mockData, 'author')).toEqual(['A', 'B']);

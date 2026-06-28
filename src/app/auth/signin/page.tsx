@@ -8,6 +8,7 @@ import { AxiosError } from 'axios';
 import { useRouter } from 'next/navigation';
 import { saveTokens } from '@/utils/token';
 import { BASE_URL } from '@/services/constants';
+import { toast } from 'react-toastify';
 
 export default function Signin() {
   const [email, setEmail] = useState('');
@@ -53,7 +54,18 @@ export default function Signin() {
 
       router.push('/music/main');
     } catch (error) {
-      console.log(error);
+      if (error instanceof AxiosError) {
+        const message =
+          error.response?.data?.detail ??
+          error.response?.data?.message ??
+          'Неверный логин или пароль';
+
+        toast.error(message);
+        setErrorMes(message);
+      } else {
+        toast.error('Неизвестная ошибка');
+        setErrorMes('Неизвестная ошибка');
+      }
     } finally {
       setIsLoading(false);
     }

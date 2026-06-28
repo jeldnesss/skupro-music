@@ -14,6 +14,7 @@ export default function CategoryPage() {
   const [tracks, setTracks] = useState<SongType[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [title, setTitle] = useState('Подборка');
 
   useEffect(() => {
     if (!id) return;
@@ -24,7 +25,7 @@ export default function CategoryPage() {
         setError(null);
 
         const res = await getCategoryById(id as string);
-
+        setTitle(res.data.name);
         const ids = res?.data?.items;
 
         if (!Array.isArray(ids)) {
@@ -64,8 +65,7 @@ export default function CategoryPage() {
       errorRes={error}
       tracks={tracks}
       isLoading={loading}
-      title="Треки"
+      title={title}
     />
   );
 }
-
